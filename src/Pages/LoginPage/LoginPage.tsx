@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
 import { NextUIProvider, Button, Input, Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage: React.FC = () => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const navigate = useNavigate();
 
   const toggleDarkMode = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle('dark');
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      console.log(email, password);
+      const response = await axios.post('http://localhost:3001/api/login', { email, password });
+      console.log(response.data);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -16,8 +33,8 @@ const LoginPage: React.FC = () => {
           <CardHeader className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">QR-Efficient</h2>
             <Switch
-              checked={isDark}
-              onChange={toggleDarkMode}
+              isSelected={isDark}
+              onValueChange={toggleDarkMode}
               size="lg"
               color="secondary"
               startContent={<SunIcon />}
@@ -26,24 +43,39 @@ const LoginPage: React.FC = () => {
           </CardHeader>
           <CardBody className="space-y-4">
             <p className="text-default-500">Enter your credentials to login</p>
-            <Input
-              type="email"
-              label="Email"
-              placeholder="bartender@qr-efficient.com"
-              variant="bordered"
-            />
-            <Input
-              type="password"
-              label="Password"
-              placeholder="Enter your password"
-              variant="bordered"
-            />
-            <Button color="secondary" className="w-full">
-              Log in
-            </Button>
+            <form onSubmit={handleLogin}>
+              <Input
+                type="email"
+                label="Email"
+                placeholder="bartender@qr-efficient.com"
+                value={email}
+                onValueChange={setEmail}
+                variant="bordered"
+                className="mb-4"
+              />
+              <Input
+                type="password"
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onValueChange={setPassword}
+                variant="bordered"
+                className="mb-4"
+              />
+              <Button type="submit" color="secondary" className="w-full">
+                Log in
+              </Button>
+            </form>
             <p className="text-center text-small">
               Don't have an account?{' '}
-              <a href="#" className="text-secondary">Sign up</a>
+              <Button
+                as="a"
+                color="secondary"
+                variant="light"
+                onPress={() => navigate('/signup')}
+              >
+                Sign up
+              </Button>
             </p>
           </CardBody>
         </Card>
@@ -52,7 +84,7 @@ const LoginPage: React.FC = () => {
   );
 };
 
-const SunIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -69,7 +101,7 @@ const SunIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const MoonIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -80,7 +112,7 @@ const MoonIcon = (props: React.SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49a8.46 8.46 0 01-1.88.13 8.409 8.409 0 01-5.91-2.82 8.068 8.068 0 01-1.44-8.66c.44-1.01.13-1.54-.09-1.76s-.77-.55-1.83-.11a10.318 10.318 0 00-6.32 10.21 10.475 10.475 0 007.04 8.99 10 10 0 002.89.55c.16.01.32.02.48.02a10.5 10.5 0 008.47-4.27c.67-.93.49-1.519.32-1.79z"
+      d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49a8.46 8.46 0 01-1.88.13 8.409 8.409 0 01-5.91-2.82 8.068 8.068 0 01-1.44-8.66c.44-1.01.13-1.54-.09-1.76s-.77-.55-1.83-.11a10.318 10.318 0 00-6.32 10.21 10.475 10.475 0 007.04 8.99 10 10 0 002.89.55c.16.01.32.02.48.02a10.5 10 0 008.47-4.27c.67-.93.49-1.519.32-1.79z"
       fill="currentColor"
     />
   </svg>
