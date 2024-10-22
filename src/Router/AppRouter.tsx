@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom"
-import {LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage} from "../Pages"
+import {LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage, MesaPage} from "../Pages"
 
 
 const AppRouter = () => {
@@ -11,6 +11,7 @@ const AppRouter = () => {
         <Route path="/dashboard" element={<DashboardPage/>} />
         <Route path="/meseros" element={<MeseroPage/>} />
         <Route path="/menu" element={<MenuPage/>} />
+        <Route path="/mesas" element={<MesaPage/>} />
     </Routes>
     </>
 }

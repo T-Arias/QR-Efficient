@@ -3,6 +3,7 @@ import RegisterPage from './RegisterPage/RegisterPage'
 import DashboardPage from './DashboardPage/DashboardPage'
 import MeseroPage from './MeseroPage/MeseroPage'
 import MenuPage from './MenuPage/MenuPage'
+import MesaPage from './MesaPage/MesaPage'
 
 
 export {
@@ -10,5 +11,6 @@ export {
     RegisterPage,
     DashboardPage,
     MeseroPage,
-    MenuPage
+    MenuPage,
+    MesaPage
 }
