@@ -117,22 +117,51 @@ const MenuPage: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validar tamaño de archivo (5MB máximo)
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        setError("La imagen es demasiado grande. El tamaño máximo es 5MB.");
-        return;
-      }
+        // Validar tamaño de archivo (5MB máximo)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            setError("La imagen es demasiado grande. El tamaño máximo es 5MB.");
+            return;
+        }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setFormData({ ...formData, foto: base64String });
-        setImagePreview(base64String);
-      };
-      reader.readAsDataURL(file);
+        // Reducir el tamaño de la imagen usando canvas
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const img = new Image();
+            img.src = reader.result as string;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const maxWidth = 800; // Ancho máximo deseado
+                const maxHeight = 800; // Alto máximo deseado
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7); // Ajusta la calidad si es necesario
+                    setFormData({ ...formData, foto: compressedBase64 });
+                    setImagePreview(compressedBase64);
+                }
+            };
+        };
+        reader.readAsDataURL(file);
     }
-  };
+};
 
   const handleAdd = () => {
     setCurrentMenu(null);
