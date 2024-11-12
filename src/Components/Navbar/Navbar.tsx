@@ -30,7 +30,6 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     { name: "Meseros", path: "/meseros" },
     { name: "Menu", path: "/menu" },
     { name: "Mesas", path: "/mesas" },
-    { name: "Comandas", path: "/comandas" },
   ];
 
   return (
@@ -78,10 +77,18 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         </Dropdown>
         <NavbarItem>
           <Link
-            to="Mesas"
+            to="http://localhost:5173/mesasBar"
             className="w-full block"
           >
             Mesas
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link
+            to="http://localhost:5173/comandas"
+            className="w-full block"
+          >
+            Comandas
           </Link>
         </NavbarItem>
       </NavbarContent>
