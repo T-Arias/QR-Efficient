@@ -26,6 +26,7 @@ interface Mesero {
 }
 interface Mesa {
   numero: number;
+  descripcion: string,
   MesaAtendida: {
     id_mesa_atendida: number,
     fecha_inicio: Date,
@@ -149,7 +150,7 @@ const MesaPage: React.FC = () => {
               <TableBody>
                 {getCurrentPageItems().map((mesa) => (
                   <TableRow key={mesa.numero}>
-                    <TableCell>{mesa.numero}</TableCell>
+                    <TableCell>{mesa.descripcion}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${mesa.MesaAtendida.descripcion == 'Libre' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                         }`}>
@@ -162,7 +163,7 @@ const MesaPage: React.FC = () => {
                     <TableCell>{mesa.MesaAtendida.fecha_inicio != null ? format(mesa.MesaAtendida.fecha_inicio.toString(), 'dd/MM/yyyy HH:mm') : ''}</TableCell>
 
                     <TableCell className="flex gap-2">
-                      {mesa.MesaAtendida.descripcion == 'Mesa cerrada' && (
+                      {mesa.MesaAtendida.descripcion == 'Cerrada' && (
                         <Button
                           color="primary"
                           size="sm"
@@ -175,7 +176,7 @@ const MesaPage: React.FC = () => {
                           Asignar Mesero
                         </Button>
                       )}
-                      {mesa.MesaAtendida.descripcion != 'Mesa cerrada' && (
+                      {mesa.MesaAtendida.descripcion != 'Cerrada' && (
                         <Button
                           color="danger"
                           size="sm"
@@ -202,44 +203,43 @@ const MesaPage: React.FC = () => {
           </div>
         </div>
         {isFormVisible && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div className="bg-white p-6 rounded-lg w-full max-w-2xl">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Agregar mesero</h2>
-        <Button color="default" onClick={() => setIsFormVisible(false)} isIconOnly>
-          <X />
-        </Button>
-      </div>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="flat" className="w-full justify-start">
-              {formData.id_mesero
-                ? `${meseros.find((m) => m.id_mesero === formData.id_mesero)?.persona.nombre} ${
-                    meseros.find((m) => m.id_mesero === formData.id_mesero)?.persona.apellido
-                  }`
-                : 'Seleccionar mesero'}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Selección de mesero"
-            className="w-full"
-            onAction={(key) => setFormData({ ...formData, id_mesero: Number(key) })}
-          >
-            {meseros.map((mesero) => (
-              <DropdownItem key={mesero.id_mesero}>{`${mesero.persona.nombre} ${mesero.persona.apellido}`}</DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-        <div className="md:col-span-2 flex justify-end">
-          <Button color="primary" type="submit" isDisabled={!formData.id_mesero}>
-            Agregar
-          </Button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white p-6 rounded-lg w-full max-w-2xl">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Agregar mesero</h2>
+                <Button color="default" onClick={() => setIsFormVisible(false)} isIconOnly>
+                  <X />
+                </Button>
+              </div>
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="flat" className="w-full justify-start">
+                      {formData.id_mesero
+                        ? `${meseros.find((m) => m.id_mesero === formData.id_mesero)?.persona.nombre} ${meseros.find((m) => m.id_mesero === formData.id_mesero)?.persona.apellido
+                        }`
+                        : 'Seleccionar mesero'}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Selección de mesero"
+                    className="w-full"
+                    onAction={(key) => setFormData({ ...formData, id_mesero: Number(key) })}
+                  >
+                    {meseros.map((mesero) => (
+                      <DropdownItem key={mesero.id_mesero}>{`${mesero.persona.nombre} ${mesero.persona.apellido}`}</DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
+                <div className="md:col-span-2 flex justify-end">
+                  <Button color="primary" type="submit" isDisabled={!formData.id_mesero}>
+                    Agregar
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
       </div>
     </>
