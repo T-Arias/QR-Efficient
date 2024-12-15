@@ -102,7 +102,7 @@ const MesaPage: React.FC = () => {
         </div>
       </div>
       <div className="mt-6 px-6">
-        <Table>
+        <Table aria-label="Gestion de mesa">
           <TableHeader>
             <TableColumn className="text-gray-600">Estado</TableColumn>
             <TableColumn className="text-gray-600">Pedido</TableColumn>
