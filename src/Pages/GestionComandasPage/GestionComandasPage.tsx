@@ -66,6 +66,7 @@ const GestionComandasPage: React.FC = () => {
   useEffect(() => {
     fetchMenus();
     fetchCategorias();
+    fetchMesaAtendida();
   }, []);
 
   useEffect(() => {
@@ -89,6 +90,20 @@ const GestionComandasPage: React.FC = () => {
       setCategorias(response.data);
     } catch (error) {
       console.error("Error fetching categorias:", error);
+    }
+  };
+
+  const fetchMesaAtendida = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/api/mesas/mesa-atendida/${mesaId}`
+      );
+      setComanda((prevComanda) => ({
+        ...prevComanda,
+        id_mesa_atendida: response.data.id_mesa_atendida,
+      }));
+    } catch (error) {
+      console.error("Error fetching mesa atendida:", error);
     }
   };
 
