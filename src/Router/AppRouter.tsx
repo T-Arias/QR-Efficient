@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom"
-import {LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage, MesaPage, MesasPage, MesaBarPage, GestionComandasPage, CuentaPage} from "../Pages"
+import {LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage, MesaPage, MesasPage, MesaBarPage, GestionComandasPage, CuentaPage, ComandasPage} from "../Pages"
 
 
 const AppRouter = () => {
@@ -16,6 +16,7 @@ const AppRouter = () => {
         <Route path="/mesasBar/:mesaId" element={<MesaBarPage/>} />
         <Route path="/mesasBar/:mesaId/gestionComandas" element={<GestionComandasPage/>} />
         <Route path="/mesasBar/:mesaId/cuenta" element={<CuentaPage/>} />
+        <Route path="/comandas" element={<ComandasPage/>} />
     </Routes>
     </>
 }

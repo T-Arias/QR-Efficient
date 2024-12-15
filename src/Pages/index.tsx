@@ -8,6 +8,7 @@ import MesasPage from './MesasBarPage/MesasBarPage'
 import MesaBarPage from './MesaBarPage/MesaBarPage'
 import GestionComandasPage from './GestionComandasPage/GestionComandasPage'
 import CuentaPage from './CuentaPage/CuentaPage'
+import ComandasPage from './ComandasPage/ComandasPage'
 
 
 
@@ -21,5 +22,6 @@ export {
     MesasPage,
     MesaBarPage,
     GestionComandasPage,
-    CuentaPage
+    CuentaPage,
+    ComandasPage
 }
