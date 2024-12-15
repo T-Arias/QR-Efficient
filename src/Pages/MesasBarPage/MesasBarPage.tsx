@@ -45,7 +45,7 @@ const MesasBarPage: React.FC = () => {
   };
 
   const handleMesaClick = (mesa: Mesa) => {
-    navigate(`/mesasBar/${mesa.MesaAtendida.id_mesa_atendida}`);
+    navigate(`/mesasBar/${mesa.numero}`);
     console.log('Mesa:', mesa);
   };
 
