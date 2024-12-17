@@ -4,6 +4,7 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Paginati
 import { Plus, Clock, X } from 'lucide-react'
 import axios from 'axios'
 import { format } from 'date-fns'
+import { useAuthStore } from '../../Store/useAuthStore';
 
 interface Mesero {
   id_restaurante: number;
@@ -53,6 +54,7 @@ const MesaPage: React.FC = () => {
     fecha_cierre: new Date()
   }
   );
+  const id_restaurante = useAuthStore.getState().id_restaurante;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -77,7 +79,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMesasAtendidas = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/mesas/restaurante/1");
+      const response = await axios.get(`http://localhost:3001/api/mesas/restaurante/${id_restaurante}`);
       setMesasAtendidas(response.data);
     } catch (error) {
       console.error("Error al obtener mesas atendidas:", error);
@@ -86,7 +88,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/mesero/restaurante/1");
+      const response = await axios.get(`http://localhost:3001/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
     } catch (error) {
       console.error("Error al obtener meseros:", error);

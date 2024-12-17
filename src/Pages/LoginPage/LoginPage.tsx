@@ -2,6 +2,38 @@ import React, { useState } from 'react';
 import { NextUIProvider, Button, Input, Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuthStore } from "../../Store/useAuthStore";
+
+interface LoginUser {
+  Persona: Persona;
+  Usuario: Usuario;
+}
+
+interface Persona {
+  id_persona: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  email: string;
+  Mesero: Mesero | null;
+  Cliente: Cliente | null;
+  Usuario: Usuario | null;
+}
+
+interface Cliente {
+  id_cliente: number;
+}
+
+interface Mesero {
+  id_mesero: number;
+  id_restaurante: number;
+}
+
+interface Usuario {
+  id_usuario: number;
+  email: string;
+  grupoId: number | null;
+}
 
 const LoginPage: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(false);
@@ -9,6 +41,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigate = useNavigate();
+  const { setAuthData } = useAuthStore();
 
   const toggleDarkMode = () => {
     setIsDark(!isDark);
@@ -20,15 +53,21 @@ const LoginPage: React.FC = () => {
     try {
       const contrasena = password;
       const response = await axios.post('http://localhost:3001/api/login', { email, contrasena });
-      console.log(response.data);
-      navigate('/dashboard');
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error en la respuesta del servidor:', error.response?.data);
-        setError(error.response?.data.message);
+      const user: LoginUser = response.data;
+
+
+      if (user.Persona.Mesero) {
+        console.log('Es mesero');
+        setAuthData(user.Persona.id_persona, user.Persona.Mesero.id_restaurante);
       } else {
-        console.error('Error inesperado:', error);
+        console.log('Es cliente');
+        setAuthData(user.Persona.id_persona);
       }
+      console.log(useAuthStore.getState().id_restaurante);
+      //navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error('Error en el login:', error);
+      setError('Error al iniciar sesión');
     }
   };
 
@@ -75,7 +114,7 @@ const LoginPage: React.FC = () => {
             {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold text-sm">{error}</strong>
               <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onClick={() =>setError('')} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+                <svg onClick={() => setError('')} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
               </span>
             </div>}
             <p className="text-center text-small">

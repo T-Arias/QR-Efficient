@@ -3,6 +3,7 @@ import { Card, CardBody, Button } from '@nextui-org/react';
 import { Check, RotateCcw, Trash2 } from 'lucide-react';
 import axios from 'axios';
 import Header from '../../Components/Navbar/Navbar';
+import { useAuthStore } from '../../Store/useAuthStore';
 
 interface Menu {
     id_menu: number;
@@ -44,6 +45,7 @@ interface Comanda {
 
 const ComandasPage: React.FC = () => {
     const [comandas, setComandas] = useState<Comanda[]>([]);
+    const id_restaurante = useAuthStore.getState().id_restaurante;
 
     useEffect(() => {
         fetchComandas();
@@ -51,7 +53,7 @@ const ComandasPage: React.FC = () => {
 
     const fetchComandas = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/comanda/restaurante/1');
+            const response = await axios.get(`http://localhost:3001/api/comanda/restaurante/${id_restaurante}`);
             setComandas(response.data);
         } catch (error) {
             console.error('Error al obtener comandas:', error);

@@ -4,6 +4,7 @@ import { Minus, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../Components/Navbar/Navbar';
+import { useAuthStore } from '../../Store/useAuthStore';
 
 interface DetalleComanda {
   id_menu: number;
@@ -61,6 +62,7 @@ const GestionComandasPage: React.FC = () => {
     total: 0,
     detallesComanda: [],
   });
+  const id_restaurante = useAuthStore.getState().id_restaurante;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const GestionComandasPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>("http://localhost:3001/api/menu/restaurante/1");
+      const response = await axios.get<Menu[]>(`http://localhost:3001/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);

@@ -3,6 +3,7 @@ import { Header } from '../../Components';
 import { Card, CardBody } from '@nextui-org/react'; // Importación de NextUI
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../Store/useAuthStore';
 
 interface Mesa {
   numero: number;
@@ -29,6 +30,7 @@ const api = axios.create({
 
 const MesasBarPage: React.FC = () => {
   const [mesas, setMesas] = useState<Mesa[]>([]);
+  const id_restaurante = useAuthStore.getState().id_restaurante;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const MesasBarPage: React.FC = () => {
 
   const fetchMesas = async () => {
     try {
-      const response = await api.get('/mesas/restaurante/1');
+      const response = await api.get(`/mesas/restaurante/${id_restaurante}`);
       setMesas(response.data);
     } catch (error) {
       console.error('Error al obtener mesas:', error);

@@ -3,6 +3,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button
 import { Header } from "../../Components";
 import axios from "axios";
 import { Plus, Edit, Trash2, X } from "lucide-react";
+import { useAuthStore } from "../../Store/useAuthStore";
 
 interface Mesero {
   id_restaurante: number;
@@ -26,12 +27,13 @@ interface Mesero {
 
 const MeseroPage: React.FC = () => {
   const [meseros, setMeseros] = useState<Mesero[]>([]);
+  const id_restaurante = useAuthStore.getState().id_restaurante;
   const [error, setError] = useState('');
   const [editingMesero, setEditingMesero] = useState<Mesero | null>(null);
   const [deleteMesero, setDeleteMesero] = useState<Mesero | null>(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formData, setFormData] = useState({
-    id_restaurante: 1,
+    id_restaurante: id_restaurante,
     id_mesero: 0,
     id_persona:0,
     persona: {
@@ -54,7 +56,7 @@ const MeseroPage: React.FC = () => {
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get<Mesero[]>("http://localhost:3001/api/mesero/restaurante/1");
+      const response = await axios.get<Mesero[]>(`http://localhost:3001/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
       console.log(response.data);
     } catch (error) {
@@ -65,7 +67,7 @@ const MeseroPage: React.FC = () => {
   const handleAdd = () => {
     setEditingMesero(null);
     setFormData({
-      id_restaurante: 1,
+      id_restaurante: id_restaurante,
       id_mesero: 0,
       id_persona:0,
       persona: { email: "", nombre: "", apellido: "", dni: "" },
@@ -77,7 +79,7 @@ const MeseroPage: React.FC = () => {
   const handleEdit = (mesero: Mesero) => {
     setEditingMesero(mesero);
     setFormData({
-      id_restaurante: 1,
+      id_restaurante: id_restaurante,
       id_mesero: mesero.id_mesero,
       id_persona: mesero.id_persona,
       persona: { ...mesero.persona },

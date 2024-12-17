@@ -18,6 +18,8 @@ import {
 import { Header } from "../../Components";
 import axios from "axios";
 import { Plus, Edit, Trash2, X } from "lucide-react";
+import { useAuthStore } from "../../Store/useAuthStore";
+
 
 interface Menu {
   id_menu: number;
@@ -47,13 +49,14 @@ const MenuPage: React.FC = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [currentMenu, setCurrentMenu] = useState<Menu | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const id_restaurante = useAuthStore.getState().id_restaurante;
   const [formData, setFormData] = useState({
     descripcion: "",
     foto: "",
     precio: "",
     activo: true,
     id_categoria: "",
-    id_restaurante: 1,
+    id_restaurante: id_restaurante,
   });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -84,7 +87,7 @@ const MenuPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>("http://localhost:3001/api/menu/restaurante/1");
+      const response = await axios.get<Menu[]>(`http://localhost:3001/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -171,7 +174,7 @@ const MenuPage: React.FC = () => {
       precio: "",
       activo: true,
       id_categoria: "",
-      id_restaurante: 1,
+      id_restaurante: id_restaurante,
     });
     setImagePreview(null);
     setIsFormVisible(true);
@@ -185,7 +188,7 @@ const MenuPage: React.FC = () => {
       precio: menu.precio.toString(),
       activo: menu.activo,
       id_categoria: menu.id_categoria.toString(),
-      id_restaurante: 1,
+      id_restaurante: id_restaurante,
     });
     setImagePreview(menu.foto);
     setIsFormVisible(true);
