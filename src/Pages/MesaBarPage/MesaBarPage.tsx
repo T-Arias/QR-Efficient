@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../Components/Navbar/Navbar';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Pagination } from '@nextui-org/react';
-import { DollarSign, Plus, Trash2 } from 'lucide-react';
+import { Check, DollarSign, Plus, Trash2 } from 'lucide-react';
 import axios from 'axios';
 
 interface Comanda {
@@ -76,6 +76,17 @@ const MesaPage: React.FC = () => {
     }
   };
 
+  const handleAccept = async (comanda: Comanda) => {
+    try {
+      await axios.put(`http://localhost:3001/api/comanda/${comanda.id_comanda}`, {
+        id_estado_comanda: 2, // Estado Aceptado
+    });
+      fetchPedidos();
+    } catch (error) {
+      console.error('Error al aceptar pedido:', error);
+    }
+  };
+
   const handleViewCuenta = async () => {
     try {
       navigate(`/mesasBar/${mesaId}/cuenta`);
@@ -116,6 +127,16 @@ const MesaPage: React.FC = () => {
                 <TableCell className="py-2 px-4">{comanda.Persona.nombre + ' ' + comanda.Persona.apellido}</TableCell>
                 <TableCell className="py-2 px-4">${comanda.total}</TableCell>
                 <TableCell>
+                {(comanda.EstadoComanda.descripcion === 'Pendiente') &&
+                    <Button
+                    className='mr-2'
+                      color='success'
+                      onClick={() => handleAccept(comanda)}
+                      startContent={<Check />}
+                    >
+                      Aceptar
+                    </Button>
+                  }
                   {(comanda.EstadoComanda.descripcion === 'Pendiente' || comanda.EstadoComanda.descripcion === 'Aceptado') &&
                     <Button
                       color="danger"
