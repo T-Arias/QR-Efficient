@@ -9,8 +9,11 @@ import MesaBarPage from './MesaBarPage/MesaBarPage'
 import GestionComandasPage from './GestionComandasPage/GestionComandasPage'
 import CuentaPage from './CuentaPage/CuentaPage'
 import ComandasPage from './ComandasPage/ComandasPage'
-
-
+import ClientDashboardPage from './ClientDashboardPage/ClientDashboardPage'
+import ClientTablePage from './ClientTablePage/ClientTablePage'
+import QRScannerPage from './QRScannerPage/QRScannerPage'
+import ClientOrderPage from './ClientOrderPage/ClientOrderPage'
+import ClientUserPage from './ClientUserPage/ClientUserPage'
 
 export {
     LoginPage,
@@ -23,5 +26,10 @@ export {
     MesaBarPage,
     GestionComandasPage,
     CuentaPage,
-    ComandasPage
+    ComandasPage,
+    ClientDashboardPage,
+    ClientTablePage,
+    ClientOrderPage,
+    QRScannerPage,
+    ClientUserPage
 }
