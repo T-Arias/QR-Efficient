@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../Components/Navbar/Navbar';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Pagination } from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@nextui-org/react';
 import { Check, DollarSign, Plus, Trash2 } from 'lucide-react';
 import axios from 'axios';
+
+interface Menu {
+  id_menu: number;
+  descripcion: string;
+}
+
+interface DetalleComanda {
+  id_menu: number;
+  cantidad: number;
+  precio_unitario: number;
+  Menu?: Menu;
+}
 
 interface Comanda {
   id_comanda: number,
@@ -23,6 +35,7 @@ interface Comanda {
     id_estado_comanda: number,
     descripcion: string
   }
+  DetallesComanda: DetalleComanda[],
 }
 
 const api = axios.create({
@@ -31,6 +44,8 @@ const api = axios.create({
 
 const MesaPage: React.FC = () => {
   const { mesaId } = useParams<{ mesaId: string }>();
+  const [selectedComanda, setSelectedComanda] = useState<Comanda | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [comandas, setComandas] = useState<Comanda[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -43,6 +58,7 @@ const MesaPage: React.FC = () => {
   const fetchPedidos = async () => {
     try {
       const response = await api.get(`/comanda/mesa/${mesaId}`);
+      console.log(response.data);
       setComandas(response.data);
     } catch (error) {
       console.error('Error al obtener pedidos:', error);
@@ -79,8 +95,8 @@ const MesaPage: React.FC = () => {
   const handleAccept = async (comanda: Comanda) => {
     try {
       await axios.put(`http://localhost:3001/api/comanda/${comanda.id_comanda}`, {
-        id_estado_comanda: 2, // Estado Aceptado
-    });
+        id_estado_comanda: 2,
+      });
       fetchPedidos();
     } catch (error) {
       console.error('Error al aceptar pedido:', error);
@@ -93,6 +109,11 @@ const MesaPage: React.FC = () => {
     } catch (error) {
       console.error('Error al ver cuenta:', error);
     }
+  };
+
+  const handleOnComandaClick = (comanda: Comanda) => {
+    setSelectedComanda(comanda);
+    setShowDetailModal(true);
   };
 
 
@@ -115,21 +136,23 @@ const MesaPage: React.FC = () => {
       <div className="mt-6 px-6">
         <Table aria-label="Gestion de mesa">
           <TableHeader>
+            <TableColumn className="text-gray-600">Comanda</TableColumn>
             <TableColumn className="text-gray-600">Estado</TableColumn>
-            <TableColumn className="text-gray-600">Pedido</TableColumn>
+            <TableColumn className="text-gray-600">Usuario</TableColumn>
             <TableColumn className="text-gray-600">Total</TableColumn>
             <TableColumn className="text-gray-600">ACCIONES</TableColumn>
           </TableHeader>
           <TableBody>
             {currentPageItems.map((comanda) => (
-              <TableRow key={comanda.id_comanda} className="hover:bg-gray-100">
+              <TableRow onClick={() => handleOnComandaClick(comanda)} key={comanda.id_comanda} className="hover:bg-gray-100 cursor-pointer">
+                <TableCell className="py-2 px-4">#{comanda.id_comanda}</TableCell>
                 <TableCell className="py-2 px-4">{comanda.EstadoComanda.descripcion}</TableCell>
                 <TableCell className="py-2 px-4">{comanda.Persona.nombre + ' ' + comanda.Persona.apellido}</TableCell>
                 <TableCell className="py-2 px-4">${comanda.total}</TableCell>
                 <TableCell>
-                {(comanda.EstadoComanda.descripcion === 'Pendiente') &&
+                  {(comanda.EstadoComanda.descripcion === 'Pendiente') &&
                     <Button
-                    className='mr-2'
+                      className='mr-2'
                       color='success'
                       onClick={() => handleAccept(comanda)}
                       startContent={<Check />}
@@ -158,6 +181,40 @@ const MesaPage: React.FC = () => {
           className="mt-4 flex justify-center"
         />
       </div>
+      <Modal isOpen={showDetailModal} placement="center" onOpenChange={setShowDetailModal}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>{`Comanda ${selectedComanda?.id_comanda}`}</ModalHeader>
+              <ModalBody>
+                {selectedComanda?.observaciones && (
+                  <p>
+                    <b>Observaciones:</b> {selectedComanda?.observaciones}
+                  </p>
+                )}
+                <p className="font-semibold">Detalles:</p>
+                <ul className="list-disc pl-5">
+                  {selectedComanda?.DetallesComanda.map((detalle, index) => (
+                    <li key={index} className="flex justify-between">
+                      <span>
+                        {detalle.cantidad}x{" "}
+                        {detalle.Menu?.descripcion}{" ($" + detalle.precio_unitario + ")"}
+                      </span>
+                      <span>${detalle.cantidad * detalle.precio_unitario}</span>
+                    </li>
+                  ))}
+                </ul>
+              </ModalBody>
+              <ModalFooter>
+                <Button className="text-red-500" variant="light" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
     </>
   );
 };
