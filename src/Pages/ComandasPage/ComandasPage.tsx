@@ -118,14 +118,14 @@ const ComandasPage: React.FC = () => {
                             <CardBody className="flex flex-col h-full">
                                 <div className="">
                                     <h2 className="text-xl font-bold mb-2">
-                                        Mesa {comanda.Cuenta.MesaAtendida.Mesa.descripcion}
+                                        Mesa {comanda.Cuenta.MesaAtendida.Mesa.descripcion} - Comanda #{comanda.id_comanda}
                                     </h2>
                                 </div>
 
                                 <div className="flex flex-col gap-4 mb-3">
-                                    {comanda.DetallesComanda.map((detalle) => (
+                                    {comanda.DetallesComanda.map((detalle,key) => (
                                         <div
-                                            key={detalle.id_detalle}
+                                            key={key}
                                             className="flex justify-between items-center border-b-1 border-gray-400 pb-2"
                                         >
                                             <span className="text-sm font-medium">{detalle.Menu.descripcion}</span>
