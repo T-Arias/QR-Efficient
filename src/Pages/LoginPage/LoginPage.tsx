@@ -59,12 +59,12 @@ const LoginPage: React.FC = () => {
       if (user.Persona.Mesero) {
         console.log('Es mesero');
         setAuthData(user.Persona.id_persona, user.Persona.Mesero.id_restaurante);
+        navigate('/mesasBar');
       } else {
         console.log('Es cliente');
         setAuthData(user.Persona.id_persona);
+        navigate('/client/dashboard');
       }
-      console.log(useAuthStore.getState().id_restaurante);
-      //navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Error en el login:', error);
       setError('Error al iniciar sesión');
