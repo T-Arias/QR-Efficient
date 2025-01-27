@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Header } from '../../Components'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import { Plus, Clock, X } from 'lucide-react'
 import axios from 'axios'
 import { format } from 'date-fns'
 import { useAuthStore } from '../../Store/useAuthStore';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface Mesero {
   id_restaurante: number;
@@ -43,6 +44,7 @@ const api = axios.create({
 const MesaPage: React.FC = () => {
   const [mesasAtendidas, setMesasAtendidas] = useState<Mesa[]>([]);
   const [meseros, setMeseros] = useState<Mesero[]>([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [currentMesa, setCurrentMesa] = useState<Mesa | null>(null);
   const [formData, setFormData] = useState({
@@ -132,6 +134,74 @@ const MesaPage: React.FC = () => {
     setIsFormVisible(false);
   };
 
+  const handleMesaClick = (mesa: Mesa) => {
+    setCurrentMesa(mesa);
+    setIsPopupOpen(true);
+  };
+
+  const handlePrint = () => {
+    if (currentMesa) {
+      const qrElement = document.querySelector('#qr-svg') as SVGSVGElement;
+      if (!qrElement) return;
+
+      const svgHTML = qrElement.outerHTML;
+
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        const qrCodeHTML = `
+          <div style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+            <h2>Mesa ${currentMesa.descripcion}</h2>
+            <div style="margin: 5px 0;">
+              <img
+                id="logo-image"
+                src="../../logo_Mesa.png"
+                alt="Logo Mesa"
+                style="
+                  display: block;
+                  margin: 0 auto;
+                  width: 120px;
+                  height: auto;
+                  border-radius: 10px;
+                "
+              />
+            </div>
+            <div style="display: inline-block; border: 4px solid #000; padding: 10px;">
+              ${svgHTML}
+            </div>
+          </div>
+        `;
+
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Imprimir QR</title>
+              <style>
+                svg {
+                  width: 256px;
+                  height: 256px;
+                }
+              </style>
+            </head>
+            <body>${qrCodeHTML}</body>
+          </html>
+        `);
+
+        printWindow.document.close();
+
+        // Asegurar la carga de la imagen antes de imprimir
+        const logoImage = printWindow.document.getElementById('logo-image') as HTMLImageElement;
+        if (logoImage) {
+          logoImage.onload = () => {
+            printWindow.print();
+          };
+        }
+      }
+    }
+  };
+
+
+
+
   return (
     <>
       <Header title="QR-Efficient" />
@@ -151,7 +221,7 @@ const MesaPage: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {getCurrentPageItems().map((mesa) => (
-                  <TableRow key={mesa.numero}>
+                  <TableRow key={mesa.numero} onClick={() => handleMesaClick(mesa)}>
                     <TableCell>{mesa.descripcion}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${mesa.MesaAtendida.descripcion == 'Libre' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -242,6 +312,43 @@ const MesaPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        <Modal isOpen={isPopupOpen} onOpenChange={setIsPopupOpen}>
+          <ModalContent className="flex justify-center items-center">
+            {(onClose) => (
+              <>
+                <ModalHeader>Mesa {currentMesa?.numero}</ModalHeader>
+                <ModalBody className="flex flex-col items-center">
+                  {currentMesa && (
+                    <div className="border-4 border-gray-600 p-4 mt-4">
+                      <QRCodeSVG
+                        id="qr-svg"
+                        level="H"
+                        fgColor={"#ef790b"}
+                        value={`'/client/table/${currentMesa.numero}'`}
+                        size={256}
+                        imageSettings={{
+                          src: "../../logo_Mesa.png",
+                          excavate: true,
+                          height: 40,
+                          width: 80
+                        }}
+                      />
+                    </div>
+                  )}
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onPress={handlePrint}>
+                    Imprimir QR
+                  </Button>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cerrar
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
 
       </div>
     </>
