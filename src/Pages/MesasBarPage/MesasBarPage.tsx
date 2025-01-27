@@ -11,18 +11,22 @@ interface Mesa {
   MesaAtendida: {
     id_mesa_atendida: number;
     fecha_inicio: Date;
-    descripcion: 'Libre' | 'Ocupada' | 'Cerrada' | 'Cuenta' | 'Mesero solicitado'; // Si representa el estado, asegúrate de que los valores coincidan con los de colorClasses
+    descripcion: string;
     nombre: string;
   };
 }
 
-const colorClasses = {
-  Libre: 'bg-green-500',
-  Ocupada: 'bg-red-500',
-  Cerrada: 'bg-gray-500',
-  Cuenta: 'bg-yellow-500',
-  'Mesero solicitado': 'bg-blue-500',
-};
+const getStatusColor = (estadoComanda: string) => {
+  switch (estadoComanda) {
+    case 'Ocupada': return 'bg-red-500'
+    case 'Libre': return 'bg-blue-500'
+    case 'Cerrada': return 'bg-gray-500'
+    case 'Cuenta solicitada': return 'bg-green-500'
+    case 'Mesero solicitado': return 'bg-amber-400'
+    case 'Nuevo pedido': return 'bg-yellow-500'
+    default: return 'bg-gray-500'
+  }
+}
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api',
@@ -46,9 +50,29 @@ const MesasBarPage: React.FC = () => {
     }
   };
 
-  const handleMesaClick = (mesa: Mesa) => {
-    navigate(`/mesasBar/${mesa.numero}`);
-    console.log('Mesa:', mesa);
+  const actionDescription = (mesa: string) => {
+    switch (mesa) {
+      case 'Cuenta solicitada':
+        return ': Cuenta solicitada';
+      case 'Mesero solicitado':
+        return ': Mesero solicitado';
+      case 'Nuevo pedido':
+        return ': Nuevo pedido cliente';
+      default:
+        return '';
+    }
+  }
+
+  const handleMesaClick = async (mesa: Mesa) => {
+    if (mesa.MesaAtendida.descripcion === 'Cuenta solicitada' || mesa.MesaAtendida.descripcion === 'Mesero solicitado') {
+      await api.put(`/mesas/${mesa.MesaAtendida.id_mesa_atendida}`, { id_estado_mesa: 2 });
+      fetchMesas();
+    } else {
+      if (mesa.MesaAtendida.descripcion === 'Nuevo pedido') {
+        await api.put(`/mesas/${mesa.MesaAtendida.id_mesa_atendida}`, { id_estado_mesa: 2 });
+      }
+      navigate(`/mesasBar/${mesa.numero}`);
+    }
   };
 
   return (
@@ -60,13 +84,12 @@ const MesasBarPage: React.FC = () => {
             <Card
               key={mesa.numero}
               isPressable={mesa.MesaAtendida.descripcion !== 'Cerrada'}
-              className={`cursor-pointer ${colorClasses[mesa.MesaAtendida.descripcion]}`}
+              className={`cursor-pointer ${getStatusColor(mesa.MesaAtendida.descripcion)}`}
               onClick={() => handleMesaClick(mesa)}
             >
               <CardBody className="flex flex-col items-center justify-center text-center">
-                {/* <LucideIcon name="coffee" className="mr-2" /> */}
                 <h4 className="text-lg font-bold text-white">
-                  Mesa {mesa.descripcion}
+                  Mesa {mesa.descripcion + ' ' + actionDescription(mesa.MesaAtendida.descripcion)}
                 </h4>
                 <p className="text-white">{mesa.MesaAtendida.nombre}</p>
               </CardBody>
