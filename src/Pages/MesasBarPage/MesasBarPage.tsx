@@ -29,7 +29,7 @@ const getStatusColor = (estadoComanda: string) => {
 }
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'https://192.168.1.5:3010/api',
 });
 
 const MesasBarPage: React.FC = () => {
@@ -62,6 +62,14 @@ const MesasBarPage: React.FC = () => {
         return '';
     }
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchMesas();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleMesaClick = async (mesa: Mesa) => {
     if (mesa.MesaAtendida.descripcion === 'Cuenta solicitada' || mesa.MesaAtendida.descripcion === 'Mesero solicitado') {
