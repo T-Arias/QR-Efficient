@@ -20,6 +20,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const clearAuthData = useAuthStore((state) => state.clearAuthData);
   const navigate = useNavigate();
   const userRole = useAuthStore().grupo;
 
@@ -34,6 +35,11 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     { name: "Ventas", path: "/reporte/ventas" },
     { name: "Productos", path: "/reporte/productos" },
   ];
+
+  const logOut = () => {
+    clearAuthData();
+    navigate("/login");
+  }
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-gray-800 text-white" maxWidth="full">
@@ -52,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             <Dropdown>
               <NavbarItem>
                 <DropdownTrigger className="cursor-pointer">
-                    Restaurante
+                  Restaurante
                 </DropdownTrigger>
               </NavbarItem>
               <DropdownMenu aria-label="Restaurant Options">
@@ -98,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             <Dropdown>
               <NavbarItem>
                 <DropdownTrigger className="cursor-pointer">
-                    Reportes
+                  Reportes
                 </DropdownTrigger>
               </NavbarItem>
               <DropdownMenu aria-label="Report Options">
@@ -120,9 +126,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
           <NavbarItem>
             <Button
               color="danger"
-              onPress={() => {
-                navigate("/login");
-                useAuthStore().clearAuthData();
+              onClick={() => {
+                logOut();
               }}
             >
               Cerrar Sesión
