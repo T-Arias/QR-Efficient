@@ -38,7 +38,7 @@ interface Mesa {
 }
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api'
+  baseURL: 'https://192.168.1.5:3010/api'
 });
 
 const MesaPage: React.FC = () => {
@@ -81,7 +81,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMesasAtendidas = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/mesas/restaurante/${id_restaurante}`);
+      const response = await axios.get(`https://192.168.1.5:3010/api/mesas/restaurante/${id_restaurante}`);
       setMesasAtendidas(response.data);
     } catch (error) {
       console.error("Error al obtener mesas atendidas:", error);
@@ -90,7 +90,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/mesero/restaurante/${id_restaurante}`);
+      const response = await axios.get(`https://192.168.1.5:3010/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
     } catch (error) {
       console.error("Error al obtener meseros:", error);
@@ -325,7 +325,7 @@ const MesaPage: React.FC = () => {
                         id="qr-svg"
                         level="H"
                         fgColor={"#ef790b"}
-                        value={`'/client/table/${currentMesa.numero}'`}
+                        value={`/client/table/${currentMesa.numero}`}
                         size={256}
                         imageSettings={{
                           src: "../../logo_Mesa.png",

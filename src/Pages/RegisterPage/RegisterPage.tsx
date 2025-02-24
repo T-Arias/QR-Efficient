@@ -54,7 +54,7 @@ const SignupPage: React.FC = () => {
     e.preventDefault();
     try {
       console.log(error);
-      const response = await axios.post('http://localhost:3001/api/cliente', formData);
+      const response = await axios.post('https://192.168.1.5:3010/api/cliente', formData);
       console.log(response.data);
       navigate('/login');
     } catch (error: unknown) {

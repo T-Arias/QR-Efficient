@@ -30,7 +30,7 @@ interface Comanda {
 }
 
 const api = axios.create({
-    baseURL: 'http://localhost:3001/api',
+    baseURL: 'https://192.168.1.5:3010/api',
 });
 
 const CuentaPage: React.FC = () => {
