@@ -39,7 +39,7 @@ interface Comanda {
 }
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'https://192.168.1.5:3010/api',
 });
 
 const MesaPage: React.FC = () => {
@@ -94,7 +94,7 @@ const MesaPage: React.FC = () => {
 
   const handleAccept = async (comanda: Comanda) => {
     try {
-      await axios.put(`http://localhost:3001/api/comanda/${comanda.id_comanda}`, {
+      await axios.put(`https://192.168.1.5:3010/api/comanda/${comanda.id_comanda}`, {
         id_estado_comanda: 2,
       });
       fetchPedidos();
@@ -105,11 +105,19 @@ const MesaPage: React.FC = () => {
 
   const handleViewCuenta = async () => {
     try {
+      const canceladas = comandas.filter(comanda => comanda.EstadoComanda.descripcion === 'Cancelado');
+
+      if (canceladas.length === comandas.length) {
+        alert('No hay pedidos para mostrar en la cuenta');
+        return;
+      }
+
       navigate(`/mesasBar/${mesaId}/cuenta`);
     } catch (error) {
       console.error('Error al ver cuenta:', error);
     }
   };
+
 
   const handleOnComandaClick = (comanda: Comanda) => {
     setSelectedComanda(comanda);

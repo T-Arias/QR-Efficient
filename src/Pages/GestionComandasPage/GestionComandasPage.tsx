@@ -77,7 +77,7 @@ const GestionComandasPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>(`http://localhost:3001/api/menu/restaurante/${id_restaurante}`);
+      const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -87,7 +87,7 @@ const GestionComandasPage: React.FC = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get<Categoria[]>(
-        "http://localhost:3001/api/categoria"
+        "https://192.168.1.5:3010/api/categoria"
       );
       setCategorias(response.data);
     } catch (error) {
@@ -98,7 +98,7 @@ const GestionComandasPage: React.FC = () => {
   const fetchMesaAtendida = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/mesas/mesa-atendida/${mesaId}`
+        `https://192.168.1.5:3010/api/mesas/mesa-atendida/${mesaId}`
       );
       setComanda((prevComanda) => ({
         ...prevComanda,
@@ -174,7 +174,7 @@ const GestionComandasPage: React.FC = () => {
       };
       setComanda(comandaActualizada);
 
-      await axios.post("http://localhost:3001/api/comanda", comandaActualizada);
+      await axios.post("https://192.168.1.5:3010/api/comanda", comandaActualizada);
       navigate(`/mesasBar/${mesaId}`);
     } catch (error) {
       console.error("Error finalizando pedido:", error);
