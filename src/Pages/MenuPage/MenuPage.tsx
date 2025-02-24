@@ -50,6 +50,7 @@ const MenuPage: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<Menu | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const id_restaurante = useAuthStore.getState().id_restaurante;
+  const id_persona = useAuthStore.getState().id_persona;
   const [formData, setFormData] = useState({
     descripcion: "",
     foto: "",
@@ -57,9 +58,10 @@ const MenuPage: React.FC = () => {
     activo: true,
     id_categoria: "",
     id_restaurante: id_restaurante,
+    id_persona: id_persona
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   // Calcular el total de páginas
   const totalPages = Math.max(1, Math.ceil(filteredMenus.length / itemsPerPage));
@@ -87,7 +89,7 @@ const MenuPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>(`http://localhost:3001/api/menu/restaurante/${id_restaurante}`);
+      const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -97,7 +99,7 @@ const MenuPage: React.FC = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get<Categoria[]>(
-        "http://localhost:3001/api/categoria"
+        "https://192.168.1.5:3010/api/categoria"
       );
       setCategorias(response.data);
     } catch (error) {
@@ -175,6 +177,7 @@ const MenuPage: React.FC = () => {
       activo: true,
       id_categoria: "",
       id_restaurante: id_restaurante,
+      id_persona: id_persona
     });
     setImagePreview(null);
     setIsFormVisible(true);
@@ -189,6 +192,7 @@ const MenuPage: React.FC = () => {
       activo: menu.activo,
       id_categoria: menu.id_categoria.toString(),
       id_restaurante: id_restaurante,
+      id_persona: id_persona
     });
     setImagePreview(menu.foto);
     setIsFormVisible(true);
@@ -197,7 +201,11 @@ const MenuPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este menú?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/menu/${id}`);
+        await axios.delete(`https://192.168.1.5:3010/api/menu/${id}`, {
+          params:{
+            id_persona: id_persona
+          },
+        });
         fetchMenus();
       } catch (error) {
         console.error("Error deleting menu:", error);
@@ -212,15 +220,15 @@ const MenuPage: React.FC = () => {
       precio: parseFloat(formData.precio),
       id_categoria: parseInt(formData.id_categoria),
     };
-
     try {
       if (currentMenu) {
         await axios.put(
-          `http://localhost:3001/api/menu/${currentMenu.id_menu}`,
+          `https://192.168.1.5:3010/api/menu/${currentMenu.id_menu}`,
           menuData
         );
+        console.log('Menu actualizado:', menuData);
       } else {
-        await axios.post("http://localhost:3001/api/menu", menuData);
+        await axios.post("https://192.168.1.5:3010/api/menu", menuData);
       }
       fetchMenus();
       setIsFormVisible(false);
