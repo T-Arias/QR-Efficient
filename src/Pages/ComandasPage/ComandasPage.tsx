@@ -51,9 +51,18 @@ const ComandasPage: React.FC = () => {
         fetchComandas();
     }, []);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchComandas();
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+
     const fetchComandas = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/comanda/restaurante/${id_restaurante}`);
+            const response = await axios.get(`https://192.168.1.5:3010/api/comanda/restaurante/${id_restaurante}`);
             setComandas(response.data);
         } catch (error) {
             console.error('Error al obtener comandas:', error);
@@ -62,7 +71,7 @@ const ComandasPage: React.FC = () => {
 
     const handleFinalizarComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`http://localhost:3001/api/comanda/${id_comanda}`, {
+            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 3 // Estado Finalizado
             });
             fetchComandas(); // Recargar comandas
@@ -73,7 +82,7 @@ const ComandasPage: React.FC = () => {
 
     const handleRevertirComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`http://localhost:3001/api/comanda/${id_comanda}`, {
+            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 2, // Estado Aceptado
             });
             fetchComandas();
@@ -84,7 +93,7 @@ const ComandasPage: React.FC = () => {
 
     const handleBorrarComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`http://localhost:3001/api/comanda/${id_comanda}`, {
+            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 6, // Estado Entregado
             });
             fetchComandas();
@@ -123,7 +132,7 @@ const ComandasPage: React.FC = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-4 mb-3">
-                                    {comanda.DetallesComanda.map((detalle,key) => (
+                                    {comanda.DetallesComanda.map((detalle, key) => (
                                         <div
                                             key={key}
                                             className="flex justify-between items-center border-b-1 border-gray-400 pb-2"
