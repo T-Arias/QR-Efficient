@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, Switch } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, Switch, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import { Header } from "../../Components";
 import axios from "axios";
 import { Plus, Edit, Trash2, X } from "lucide-react";
@@ -22,15 +22,21 @@ interface Mesero {
     activo: boolean;
     id_persona: number;
     grupoId: number | null;
+    grupo: string;
   };
+}
+
+interface Grupo {
+  id: number;
+  nombre: string;
 }
 
 const MeseroPage: React.FC = () => {
   const [meseros, setMeseros] = useState<Mesero[]>([]);
+  const [grupos, setGrupos] = useState<Grupo[]>([]);
   const id_restaurante = useAuthStore.getState().id_restaurante;
   const [error, setError] = useState('');
   const [editingMesero, setEditingMesero] = useState<Mesero | null>(null);
-  const [deleteMesero, setDeleteMesero] = useState<Mesero | null>(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formData, setFormData] = useState({
     id_restaurante: id_restaurante,
@@ -52,17 +58,28 @@ const MeseroPage: React.FC = () => {
 
   useEffect(() => {
     fetchMeseros();
+    fetchGrupos();
   }, []);
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get<Mesero[]>(`http://localhost:3001/api/mesero/restaurante/${id_restaurante}`);
+      const response = await axios.get<Mesero[]>(`https://192.168.1.5:3010/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching meseros:", error);
     }
   };
+
+  const fetchGrupos = async () => {
+    try {
+      const response = await axios.get<Grupo[]>("https://192.168.1.5:3010/api/mesero/grupos");
+      setGrupos(response.data);
+    } catch (error) {
+      console.error("Error fetching grupos:", error);
+    }
+  };
+
+
 
   const handleAdd = () => {
     setEditingMesero(null);
@@ -85,24 +102,16 @@ const MeseroPage: React.FC = () => {
       persona: { ...mesero.persona },
       usuario: {
         ...mesero.usuario,
-        contrasena: "" // No mostramos la contraseña actual por seguridad
+        contrasena: ""
       }
     });
     setIsFormVisible(true);
   };
 
   const handleDelete = async (mesero: Mesero) => {
-    setDeleteMesero({
-      ...mesero, // Hacemos una copia del objeto mesero
-      usuario: {
-        ...mesero.usuario, // Hacemos una copia del objeto usuario dentro de mesero
-        activo: false // Cambiamos solo la propiedad activo
-      }
-    });
-
     if (window.confirm("¿Estás seguro de que quieres eliminar este mesero?")) {
       try {
-        await axios.put(`http://localhost:3001/api/mesero/${mesero.id_mesero}`, deleteMesero);
+        await axios.delete(`https://192.168.1.5:3010/api/mesero/${mesero.usuario.id_usuario}`);
         fetchMeseros();
       } catch (error) {
         console.error("Error deleting mesero:", error);
@@ -114,16 +123,14 @@ const MeseroPage: React.FC = () => {
     e.preventDefault();
     try {
       if (editingMesero) {
-        console.log(formData);
         const cleanedFormData = { ...formData };
 
-        // Si la contraseña está vacía, eliminarla del objeto usuario
         if (!cleanedFormData.usuario.contrasena) {
           delete cleanedFormData.usuario.contrasena;
         }
-        await axios.put(`http://localhost:3001/api/mesero/${editingMesero.id_mesero}`, formData);
+        await axios.put(`https://192.168.1.5:3010/api/mesero/${editingMesero.id_mesero}`, formData);
       } else {
-        await axios.post("http://localhost:3001/api/mesero", formData);
+        await axios.post("https://192.168.1.5:3010/api/mesero", formData);
       }
       fetchMeseros();
       setIsFormVisible(false);
@@ -168,7 +175,7 @@ const MeseroPage: React.FC = () => {
                     <TableCell>{mesero.persona.email}</TableCell>
                     <TableCell>{mesero.persona.dni}</TableCell>
                     <TableCell>{mesero.usuario.activo ? "Sí" : "No"}</TableCell>
-                    <TableCell>{mesero.usuario.grupoId || "N/A"}</TableCell>
+                    <TableCell>{mesero.usuario.grupo || "N/A"}</TableCell>
                     <TableCell>
                       <Button
                         color="warning"
@@ -229,12 +236,20 @@ const MeseroPage: React.FC = () => {
                   value={formData.usuario.contrasena}
                   onChange={(e) => setFormData({ ...formData, usuario: { ...formData.usuario,...(e.target.value ? { contrasena: e.target.value } : {}) } })}
                 />
-                <Input
-                  label="Grupo ID"
-                  type="number"
-                  value={formData.usuario.grupoId?.toString() || ""}
-                  onChange={(e) => setFormData({ ...formData, usuario: { ...formData.usuario, grupoId: e.target.value ? Number(e.target.value) : null } })}
-                />
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button variant="flat" className="w-full justify-start">
+                    {formData.usuario.grupoId ? grupos.find((grupo) => grupo.id === formData.usuario.grupoId)?.nombre : "Seleccionar Grupo"}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    {grupos.map((grupo) => (
+                      <DropdownItem key={grupo.id} onClick={() => { setFormData({ ...formData, usuario: { ...formData.usuario, grupoId: grupo.id } }); }}>
+                        {grupo.nombre}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
                 <div className="flex items-center">
                   <Switch
                     defaultSelected={formData.usuario.activo}
