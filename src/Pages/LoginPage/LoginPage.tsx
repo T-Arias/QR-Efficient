@@ -31,8 +31,8 @@ interface Mesero {
 
 interface Usuario {
   id_usuario: number;
+  grupo: string;
   email: string;
-  grupoId: number | null;
 }
 
 const LoginPage: React.FC = () => {
@@ -52,22 +52,20 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       const contrasena = password;
-      const response = await axios.post('http://localhost:3001/api/login', { email, contrasena });
+      const response = await axios.post('https://192.168.1.5:3010/api/login', { email, contrasena });
+      console.log('Response:', response.data);
       const user: LoginUser = response.data;
 
-
-      if (user.Persona.Mesero) {
-        console.log('Es mesero');
-        setAuthData(user.Persona.id_persona, user.Persona.Mesero.id_restaurante);
+      if (user.Usuario.grupo === 'Admin' || user.Usuario.grupo === 'Mesero') {
+        setAuthData(user.Persona.id_persona, user.Usuario.grupo, user.Persona.Mesero?.id_restaurante);
         navigate('/mesasBar');
       } else {
-        console.log('Es cliente');
-        setAuthData(user.Persona.id_persona);
+        setAuthData(user.Persona.id_persona, user.Usuario.grupo);
         navigate('/client/dashboard');
       }
     } catch (error: unknown) {
       console.error('Error en el login:', error);
-      setError('Error al iniciar sesión');
+      setError(String(error));
     }
   };
 
