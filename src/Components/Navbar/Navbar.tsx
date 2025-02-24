@@ -12,97 +12,129 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuthStore } from "../../Store/useAuthStore";
 
 interface HeaderProps {
   title: string;
 }
 
-interface MenuItem {
-  name: string;
-  path: string;
-}
-
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const userRole = useAuthStore().grupo;
 
-  const menuItems: MenuItem[] = [
+  // Menú visible solo para ADMIN
+  const adminMenuItems = [
     { name: "Meseros", path: "/meseros" },
     { name: "Menu", path: "/menu" },
     { name: "Mesas", path: "/mesas" },
   ];
 
+  const reportMenuItems = [
+    { name: "Ventas", path: "/reporte/ventas" },
+    { name: "Productos", path: "/reporte/productos" },
+  ];
+
   return (
-    <Navbar
-      onMenuOpenChange={setIsMenuOpen}
-      className="bg-gray-800 text-white"
-      maxWidth="full"
-    >
+    <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-gray-800 text-white" maxWidth="full">
       <NavbarContent>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
-        />
+        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="sm:hidden" />
         <NavbarBrand>
           <p className="font-bold text-inherit">{title}</p>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <Dropdown>
-          <NavbarItem>
-            <DropdownTrigger>
-              <Button
-                disableRipple
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent text-white"
-                radius="sm"
-                variant="light"
-              >
-                Restaurante
-              </Button>
-            </DropdownTrigger>
-          </NavbarItem>
-          <DropdownMenu aria-label="Restaurant Options">
-            {menuItems.map((item) => (
-              <DropdownItem key={item.name.toLowerCase()}>
-                <Link
-                  to={item.path}
-                  className="text-black w-full block"
-                >
-                  {item.name}
+      {/* Mostrar menú solo si hay sesión activa */}
+      {userRole && (
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+          {/* Secciones disponibles para Admin */}
+          {userRole === "Admin" && (
+            <Dropdown>
+              <NavbarItem>
+                <DropdownTrigger className="cursor-pointer">
+                    Restaurante
+                </DropdownTrigger>
+              </NavbarItem>
+              <DropdownMenu aria-label="Restaurant Options">
+                {adminMenuItems.map((item) => (
+                  <DropdownItem key={item.name.toLowerCase()} textValue={item.name}>
+                    <Link to={item.path} className="text-black w-full block">
+                      {item.name}
+                    </Link>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          )}
+
+          {/* Secciones accesibles para Admin y Mesero */}
+          {(userRole === "Admin" || userRole === "Mesero") && (
+            <>
+              <NavbarItem>
+                <Link to="/mesasBar" className="w-full block">
+                  Mesas
                 </Link>
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-        <NavbarItem>
-          <Link
-            to="http://localhost:5173/mesasBar"
-            className="w-full block"
-          >
-            Mesas
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            to="http://localhost:5173/comandas"
-            className="w-full block"
-          >
-            Comandas
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
+              </NavbarItem>
+              <NavbarItem>
+                <Link to="/comandas" className="w-full block">
+                  Comandas
+                </Link>
+              </NavbarItem>
+            </>
+          )}
+
+          {(userRole === "Admin") && (
+            <>
+              <NavbarItem>
+                <Link to="/auditorias" className="w-full block">
+                  Auditoria
+                </Link>
+              </NavbarItem>
+            </>
+          )}
+
+          {/* Reportes solo para Admin */}
+          {userRole === "Admin" && (
+            <Dropdown>
+              <NavbarItem>
+                <DropdownTrigger className="cursor-pointer">
+                    Reportes
+                </DropdownTrigger>
+              </NavbarItem>
+              <DropdownMenu aria-label="Report Options">
+                {reportMenuItems.map((item) => (
+                  <DropdownItem key={item.name.toLowerCase()} textValue={item.name}>
+                    <Link to={item.path} className="text-black w-full block">
+                      {item.name}
+                    </Link>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          )}
+        </NavbarContent>
+      )}
 
       <NavbarContent justify="end">
-        <NavbarItem>
-          <Button
-            color="danger"
-            variant="flat"
-            onPress={() => navigate('/login')}
-          >
-            Cerrar Sesión
-          </Button>
-        </NavbarItem>
+        {userRole ? (
+          <NavbarItem>
+            <Button
+              color="danger"
+              onPress={() => {
+                navigate("/login");
+                useAuthStore().clearAuthData();
+              }}
+            >
+              Cerrar Sesión
+            </Button>
+          </NavbarItem>
+        ) : (
+          <NavbarItem>
+            <Button color="primary" onPress={() => navigate("/login")}>
+              Iniciar Sesión
+            </Button>
+          </NavbarItem>
+        )}
       </NavbarContent>
     </Navbar>
   );

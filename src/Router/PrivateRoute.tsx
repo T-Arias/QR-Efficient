@@ -1,9 +1,18 @@
-import { ReactElement } from "react";
-import { Navigate, useLocation } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStore } from "../../src/Store/useAuthStore";
 
-  const PrivateRoute = ({ children }: { children: ReactElement }): ReactElement => {
-    const {state} = useLocation();
-  return state?.logged ? children : <Navigate to='/login' />;
+interface ProtectedRouteProps {
+  allowedRoles: string[];
 }
 
-export default PrivateRoute
+const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+  const role = useAuthStore().grupo;
+
+  if (!role) return <Navigate to="/login" replace />;
+  if (!allowedRoles.includes(role) && (role=='Admin' || role==='Mesero')) return <Navigate to="/mesasBar" replace />;
+  if (!allowedRoles.includes(role) && role=='Cliente') return <Navigate to="/client/dashboard" replace />;
+
+  return <Outlet />;
+};
+
+export default ProtectedRoute;
