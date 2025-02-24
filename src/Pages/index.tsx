@@ -14,6 +14,9 @@ import ClientTablePage from './ClientTablePage/ClientTablePage'
 import QRScannerPage from './QRScannerPage/QRScannerPage'
 import ClientOrderPage from './ClientOrderPage/ClientOrderPage'
 import ClientUserPage from './ClientUserPage/ClientUserPage'
+import EarningsReportPage from './EarningsReportPage/EarningsReportPage'
+import CategoryReportPage from './CategoryReportPage/CategoryReportPage'
+import AuditoryPage from './AuditoryPage/AuditoryPage.tsx'
 
 export {
     LoginPage,
@@ -31,5 +34,8 @@ export {
     ClientTablePage,
     ClientOrderPage,
     QRScannerPage,
-    ClientUserPage
+    ClientUserPage,
+    EarningsReportPage,
+    CategoryReportPage,
+    AuditoryPage
 }
