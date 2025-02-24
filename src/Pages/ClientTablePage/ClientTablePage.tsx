@@ -79,6 +79,15 @@ const ClientTablePage: React.FC = () => {
     }, [mesaId]);
 
     useEffect(() => {
+        const interval = setInterval(() => {
+            fetchPedidos();
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+
+    useEffect(() => {
         const nuevoTotal = comandas.reduce((total, comanda) => total + Number(comanda.EstadoComanda.id_estado_comanda !== 5 ? comanda.total : 0), 0);
         setTotalCuenta(nuevoTotal);
     }, [comandas]);
@@ -96,7 +105,7 @@ const ClientTablePage: React.FC = () => {
         try {
             const response = await api.get(`/mesas/mesa-atendida/${mesaId}`);
             const currentPersonId = useAuthStore.getState().id_persona;
-            const currentPersonGroup = useAuthStore.getState().grupo||'';
+            const currentPersonGroup = useAuthStore.getState().grupo || '';
             if (currentPersonId !== null) {
                 authStore.setAuthData(currentPersonId, currentPersonGroup, response.data.Mesa.id_restaurante);
             }
