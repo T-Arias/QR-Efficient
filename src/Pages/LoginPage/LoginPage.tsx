@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
       }
     } catch (error: unknown) {
       console.error('Error en el login:', error);
-      setError(String(error));
+      setError('Error al iniciar sesión, verifique sus credenciales');
     }
   };
 
