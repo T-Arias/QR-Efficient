@@ -43,7 +43,7 @@ interface Comanda {
 const ClientOrderPage: React.FC = () => {
     const navigate = useNavigate();
     const { mesaId } = useParams();
-    const id_restaurante = useAuthStore.getState().id_restaurante;
+    let id_restaurante = useAuthStore.getState().id_restaurante || 0;
     const id_persona = useAuthStore.getState().id_persona || 0;
     const [activeCategory, setActiveCategory] = useState<Categoria | null>({ id_categoria: 1, nombre: "Pizzas" });
     const [menus, setMenus] = useState<Menu[]>([]);
@@ -73,7 +73,7 @@ const ClientOrderPage: React.FC = () => {
 
     const fetchMenus = async () => {
         try {
-            const response = await axios.get<Menu[]>(`http://localhost:3001/api/menu/restaurante/${id_restaurante}`);
+            const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
             setMenus(response.data);
         } catch (error) {
             console.error("Error fetching menus:", error);
@@ -82,7 +82,7 @@ const ClientOrderPage: React.FC = () => {
 
     const fetchCategorias = async () => {
         try {
-            const response = await axios.get<Categoria[]>("http://localhost:3001/api/categoria");
+            const response = await axios.get<Categoria[]>("https://192.168.1.5:3010/api/categoria");
             setCategorias(response.data);
         } catch (error) {
             console.error("Error fetching categorias:", error);
@@ -92,7 +92,7 @@ const ClientOrderPage: React.FC = () => {
     const fetchMesaAtendida = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:3001/api/mesas/mesa-atendida/${mesaId}`
+                `https://192.168.1.5:3010/api/mesas/mesa-atendida/${mesaId}`
             );
             setComanda((prevComanda) => ({
                 ...prevComanda,
@@ -156,8 +156,8 @@ const ClientOrderPage: React.FC = () => {
                 }))
             };
             if (comandaActualizada.detallesComanda.length > 0) {
-                await axios.post("http://localhost:3001/api/comanda", comandaActualizada);
-                await axios.put(`http://localhost:3001/api/mesas/${comanda.id_mesa_atendida}`, { id_estado_mesa: 6 });
+                await axios.post("https://192.168.1.5:3010/api/comanda", comandaActualizada);
+                await axios.put(`https://192.168.1.5:3010/api/mesas/${comanda.id_mesa_atendida}`, { id_estado_mesa: 6 });
                 navigate(`/client/table/${mesaId}`);
             }
         } catch (error) {
