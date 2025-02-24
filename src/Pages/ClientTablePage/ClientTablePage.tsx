@@ -70,7 +70,7 @@ const ClientTablePage: React.FC = () => {
     const [modalMessage, setModalMessage] = useState<string>("");
 
     const api = axios.create({
-        baseURL: 'http://localhost:3001/api',
+        baseURL: 'https://192.168.1.5:3010/api',
     });
 
     useEffect(() => {
@@ -96,8 +96,9 @@ const ClientTablePage: React.FC = () => {
         try {
             const response = await api.get(`/mesas/mesa-atendida/${mesaId}`);
             const currentPersonId = useAuthStore.getState().id_persona;
+            const currentPersonGroup = useAuthStore.getState().grupo||'';
             if (currentPersonId !== null) {
-                authStore.setAuthData(currentPersonId, response.data.Mesa.id_restaurante);
+                authStore.setAuthData(currentPersonId, currentPersonGroup, response.data.Mesa.id_restaurante);
             }
             setMesa(response.data);
         } catch (error) {
