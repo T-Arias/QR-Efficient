@@ -318,7 +318,7 @@ function EarningsReportPage() {
                   <BarChart data={desempenoMeseros}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="nombre" />
-                    <YAxis yAxisId="ventas" domain={[0, 'dataMax+30']} />
+                    <YAxis yAxisId="ventas" domain={[0, 'dataMax+50']} />
                     <YAxis yAxisId="cuentas" orientation="right" domain={[0, 'dataMax+10']} />
                     <Tooltip />
                     <Legend />
