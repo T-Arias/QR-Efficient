@@ -1,12 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NextUIProvider, Navbar, Card, NavbarBrand, NavbarContent, Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem, CardBody } from "@nextui-org/react"
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../Store/useAuthStore'
 import FooterCliente from '../../Components/FooterCliente/FooterCliente'
+import axios from 'axios'
 
 const ClientDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const id_persona = useAuthStore.getState().id_persona;
+  const [email, setEmail] = useState('');
   const clearAuthData = useAuthStore((state) => state.clearAuthData);
+
+    useEffect(() => {
+      getPersona();
+    }, []);
+
+    const getPersona = async () => {
+      try {
+        const response = await axios.get(`https://192.168.1.5:3010/api/cliente/${id_persona}`);
+        setEmail(response.data.Persona.email);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.error('Error en la respuesta del servidor:', error.response?.data);
+        } else {
+          console.error('Error inesperado:', error);
+        }
+      }
+    };
 
   const handleLogout = () => {
     clearAuthData();
@@ -37,7 +57,7 @@ const ClientDashboardPage: React.FC = () => {
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem textValue="Profile" key="profile" className="h-14 gap-2">
                   <p className="font-semibold">Bienvenido</p>
-                  <p className="font-semibold">zoey@example.com</p>
+                  <p className="font-semibold">{email}</p>
                 </DropdownItem>
                 <DropdownItem onClick={() => navigate('/client/user')} key="settings">Configuración</DropdownItem>
                 <DropdownItem onClick={() => navigate('/client/conditions')} key="help_and_feedback">Usos y condiciones</DropdownItem>
