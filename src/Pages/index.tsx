@@ -17,6 +17,7 @@ import ClientUserPage from './ClientUserPage/ClientUserPage'
 import EarningsReportPage from './EarningsReportPage/EarningsReportPage'
 import CategoryReportPage from './CategoryReportPage/CategoryReportPage'
 import AuditoryPage from './AuditoryPage/AuditoryPage.tsx'
+import ClientConditionsPage from './ClientConditionsPage/ClientConditionsPage'
 
 export {
     LoginPage,
@@ -37,5 +38,6 @@ export {
     ClientUserPage,
     EarningsReportPage,
     CategoryReportPage,
-    AuditoryPage
+    AuditoryPage,
+    ClientConditionsPage
 }

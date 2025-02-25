@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage, MesaPage, MesasPage, MesaBarPage, GestionComandasPage, CuentaPage, ComandasPage, AuditoryPage,CategoryReportPage, EarningsReportPage, ClientDashboardPage, ClientOrderPage, ClientTablePage, QRScannerPage, ClientUserPage } from "../Pages";
+import { LoginPage, RegisterPage, DashboardPage, MeseroPage, MenuPage, MesaPage, MesasPage, MesaBarPage, GestionComandasPage, CuentaPage, ComandasPage, AuditoryPage, CategoryReportPage, EarningsReportPage, ClientDashboardPage, ClientOrderPage, ClientTablePage, QRScannerPage, ClientUserPage, ClientConditionsPage } from "../Pages";
 import ProtectedRoute from "./PrivateRoute";
 
 const AppRouter = () => {
@@ -37,6 +37,7 @@ const AppRouter = () => {
         <Route path="/client/order/:mesaId" element={<ClientOrderPage />} />
         <Route path="/client/qrscanner" element={<QRScannerPage />} />
         <Route path="/client/user" element={<ClientUserPage />} />
+        <Route path="/client/conditions" element={<ClientConditionsPage />} />
       </Route>
     </Routes>
   );
