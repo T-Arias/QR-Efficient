@@ -17,7 +17,7 @@ const ClientDashboardPage: React.FC = () => {
 
     const getPersona = async () => {
       try {
-        const response = await axios.get(`https://192.168.1.5:3010/api/cliente/${id_persona}`);
+        const response = await axios.get(`https://qr-efficient-backend.onrender.com/api/cliente/${id_persona}`);
         setEmail(response.data.Persona.email);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {

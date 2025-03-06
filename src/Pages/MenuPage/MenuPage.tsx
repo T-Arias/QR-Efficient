@@ -89,7 +89,7 @@ const MenuPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
+      const response = await axios.get<Menu[]>(`https://qr-efficient-backend.onrender.com/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -99,7 +99,7 @@ const MenuPage: React.FC = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get<Categoria[]>(
-        "https://192.168.1.5:3010/api/categoria"
+        "https://qr-efficient-backend.onrender.com/api/categoria"
       );
       setCategorias(response.data);
     } catch (error) {
@@ -201,7 +201,7 @@ const MenuPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este menú?")) {
       try {
-        await axios.delete(`https://192.168.1.5:3010/api/menu/${id}`, {
+        await axios.delete(`https://qr-efficient-backend.onrender.com/api/menu/${id}`, {
           params:{
             id_persona: id_persona
           },
@@ -223,12 +223,12 @@ const MenuPage: React.FC = () => {
     try {
       if (currentMenu) {
         await axios.put(
-          `https://192.168.1.5:3010/api/menu/${currentMenu.id_menu}`,
+          `https://qr-efficient-backend.onrender.com/api/menu/${currentMenu.id_menu}`,
           menuData
         );
         console.log('Menu actualizado:', menuData);
       } else {
-        await axios.post("https://192.168.1.5:3010/api/menu", menuData);
+        await axios.post("https://qr-efficient-backend.onrender.com/api/menu", menuData);
       }
       fetchMenus();
       setIsFormVisible(false);

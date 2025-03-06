@@ -59,7 +59,7 @@ const ClientUserPage: React.FC = () => {
 
   const getPersona = async () => {
     try {
-      const response = await axios.get(`https://192.168.1.5:3010/api/cliente/${id_persona}`);
+      const response = await axios.get(`https://qr-efficient-backend.onrender.com/api/cliente/${id_persona}`);
       setFormData({
         id_cliente: response.data.id_cliente,
         id_persona: response.data.id_persona,
@@ -137,7 +137,7 @@ const ClientUserPage: React.FC = () => {
         delete formData.Usuario.contrasena;
       }
       console.log(formData.Usuario.email);
-      await axios.put(`https://192.168.1.5:3010/api/cliente/${formData.id_cliente}`, formData);
+      await axios.put(`https://qr-efficient-backend.onrender.com/api/cliente/${formData.id_cliente}`, formData);
       setIsSuccessModalOpen(true);
       navigate('/client/dashboard');
     } catch (error: unknown) {

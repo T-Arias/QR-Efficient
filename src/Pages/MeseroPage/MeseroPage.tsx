@@ -63,7 +63,7 @@ const MeseroPage: React.FC = () => {
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get<Mesero[]>(`https://192.168.1.5:3010/api/mesero/restaurante/${id_restaurante}`);
+      const response = await axios.get<Mesero[]>(`https://qr-efficient-backend.onrender.com/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
     } catch (error) {
       console.error("Error fetching meseros:", error);
@@ -72,7 +72,7 @@ const MeseroPage: React.FC = () => {
 
   const fetchGrupos = async () => {
     try {
-      const response = await axios.get<Grupo[]>("https://192.168.1.5:3010/api/mesero/grupos");
+      const response = await axios.get<Grupo[]>("https://qr-efficient-backend.onrender.com/api/mesero/grupos");
       setGrupos(response.data);
     } catch (error) {
       console.error("Error fetching grupos:", error);
@@ -111,7 +111,7 @@ const MeseroPage: React.FC = () => {
   const handleDelete = async (mesero: Mesero) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este mesero?")) {
       try {
-        await axios.delete(`https://192.168.1.5:3010/api/mesero/${mesero.usuario.id_usuario}`);
+        await axios.delete(`https://qr-efficient-backend.onrender.com/api/mesero/${mesero.usuario.id_usuario}`);
         fetchMeseros();
       } catch (error) {
         console.error("Error deleting mesero:", error);
@@ -128,9 +128,9 @@ const MeseroPage: React.FC = () => {
         if (!cleanedFormData.usuario.contrasena) {
           delete cleanedFormData.usuario.contrasena;
         }
-        await axios.put(`https://192.168.1.5:3010/api/mesero/${editingMesero.id_mesero}`, formData);
+        await axios.put(`https://qr-efficient-backend.onrender.com/api/mesero/${editingMesero.id_mesero}`, formData);
       } else {
-        await axios.post("https://192.168.1.5:3010/api/mesero", formData);
+        await axios.post("https://qr-efficient-backend.onrender.com/api/mesero", formData);
       }
       fetchMeseros();
       setIsFormVisible(false);

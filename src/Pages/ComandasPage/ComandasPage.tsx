@@ -62,7 +62,7 @@ const ComandasPage: React.FC = () => {
 
     const fetchComandas = async () => {
         try {
-            const response = await axios.get(`https://192.168.1.5:3010/api/comanda/restaurante/${id_restaurante}`);
+            const response = await axios.get(`https://qr-efficient-backend.onrender.com/api/comanda/restaurante/${id_restaurante}`);
             setComandas(response.data);
         } catch (error) {
             console.error('Error al obtener comandas:', error);
@@ -71,7 +71,7 @@ const ComandasPage: React.FC = () => {
 
     const handleFinalizarComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
+            await axios.put(`https://qr-efficient-backend.onrender.com/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 3 // Estado Finalizado
             });
             fetchComandas(); // Recargar comandas
@@ -82,7 +82,7 @@ const ComandasPage: React.FC = () => {
 
     const handleRevertirComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
+            await axios.put(`https://qr-efficient-backend.onrender.com/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 2, // Estado Aceptado
             });
             fetchComandas();
@@ -93,7 +93,7 @@ const ComandasPage: React.FC = () => {
 
     const handleBorrarComanda = async (id_comanda: number) => {
         try {
-            await axios.put(`https://192.168.1.5:3010/api/comanda/${id_comanda}`, {
+            await axios.put(`https://qr-efficient-backend.onrender.com/api/comanda/${id_comanda}`, {
                 id_estado_comanda: 6, // Estado Entregado
             });
             fetchComandas();

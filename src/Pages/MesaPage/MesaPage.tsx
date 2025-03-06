@@ -38,7 +38,7 @@ interface Mesa {
 }
 
 const api = axios.create({
-  baseURL: 'https://192.168.1.5:3010/api'
+  baseURL: 'https://qr-efficient-backend.onrender.com/api'
 });
 
 const MesaPage: React.FC = () => {
@@ -81,7 +81,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMesasAtendidas = async () => {
     try {
-      const response = await axios.get(`https://192.168.1.5:3010/api/mesas/restaurante/${id_restaurante}`);
+      const response = await axios.get(`https://qr-efficient-backend.onrender.com/api/mesas/restaurante/${id_restaurante}`);
       setMesasAtendidas(response.data);
     } catch (error) {
       console.error("Error al obtener mesas atendidas:", error);
@@ -90,7 +90,7 @@ const MesaPage: React.FC = () => {
 
   const fetchMeseros = async () => {
     try {
-      const response = await axios.get(`https://192.168.1.5:3010/api/mesero/restaurante/${id_restaurante}`);
+      const response = await axios.get(`https://qr-efficient-backend.onrender.com/api/mesero/restaurante/${id_restaurante}`);
       setMeseros(response.data);
     } catch (error) {
       console.error("Error al obtener meseros:", error);

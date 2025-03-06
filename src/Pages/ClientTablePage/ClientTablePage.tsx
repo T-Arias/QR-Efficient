@@ -70,7 +70,7 @@ const ClientTablePage: React.FC = () => {
     const [modalMessage, setModalMessage] = useState<string>("");
 
     const api = axios.create({
-        baseURL: 'https://192.168.1.5:3010/api',
+        baseURL: 'https://qr-efficient-backend.onrender.com/api',
     });
 
     useEffect(() => {

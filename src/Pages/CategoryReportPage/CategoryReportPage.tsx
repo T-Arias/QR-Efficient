@@ -53,7 +53,7 @@ interface Categoria {
 }
 
 const api = axios.create({
-  baseURL: 'https://192.168.1.5:3010/api'
+  baseURL: 'https://qr-efficient-backend.onrender.com/api'
 });
 
 function CategoryReportPage() {
@@ -130,7 +130,7 @@ function CategoryReportPage() {
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get<Categoria[]>("https://192.168.1.5:3010/api/categoria");
+      const response = await axios.get<Categoria[]>("https://qr-efficient-backend.onrender.com/api/categoria");
       setCategorias(response.data);
     } catch (error) {
       console.error("Error fetching categorias:", error);

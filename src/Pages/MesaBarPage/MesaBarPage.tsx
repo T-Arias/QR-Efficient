@@ -39,7 +39,7 @@ interface Comanda {
 }
 
 const api = axios.create({
-  baseURL: 'https://192.168.1.5:3010/api',
+  baseURL: 'https://qr-efficient-backend.onrender.com/api',
 });
 
 const MesaPage: React.FC = () => {
@@ -94,7 +94,7 @@ const MesaPage: React.FC = () => {
 
   const handleAccept = async (comanda: Comanda) => {
     try {
-      await axios.put(`https://192.168.1.5:3010/api/comanda/${comanda.id_comanda}`, {
+      await axios.put(`https://qr-efficient-backend.onrender.com/api/comanda/${comanda.id_comanda}`, {
         id_estado_comanda: 2,
       });
       fetchPedidos();

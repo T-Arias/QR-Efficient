@@ -77,7 +77,7 @@ const GestionComandasPage: React.FC = () => {
 
   const fetchMenus = async () => {
     try {
-      const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
+      const response = await axios.get<Menu[]>(`https://qr-efficient-backend.onrender.com/api/menu/restaurante/${id_restaurante}`);
       setMenus(response.data);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -87,7 +87,7 @@ const GestionComandasPage: React.FC = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get<Categoria[]>(
-        "https://192.168.1.5:3010/api/categoria"
+        "https://qr-efficient-backend.onrender.com/api/categoria"
       );
       setCategorias(response.data);
     } catch (error) {
@@ -98,7 +98,7 @@ const GestionComandasPage: React.FC = () => {
   const fetchMesaAtendida = async () => {
     try {
       const response = await axios.get(
-        `https://192.168.1.5:3010/api/mesas/mesa-atendida/${mesaId}`
+        `https://qr-efficient-backend.onrender.com/api/mesas/mesa-atendida/${mesaId}`
       );
       setComanda((prevComanda) => ({
         ...prevComanda,
@@ -174,7 +174,7 @@ const GestionComandasPage: React.FC = () => {
       };
       setComanda(comandaActualizada);
 
-      await axios.post("https://192.168.1.5:3010/api/comanda", comandaActualizada);
+      await axios.post("https://qr-efficient-backend.onrender.com/api/comanda", comandaActualizada);
       navigate(`/mesasBar/${mesaId}`);
     } catch (error) {
       console.error("Error finalizando pedido:", error);

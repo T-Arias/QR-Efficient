@@ -73,7 +73,7 @@ const ClientOrderPage: React.FC = () => {
 
     const fetchMenus = async () => {
         try {
-            const response = await axios.get<Menu[]>(`https://192.168.1.5:3010/api/menu/restaurante/${id_restaurante}`);
+            const response = await axios.get<Menu[]>(`https://qr-efficient-backend.onrender.com/api/menu/restaurante/${id_restaurante}`);
             setMenus(response.data);
         } catch (error) {
             console.error("Error fetching menus:", error);
@@ -82,7 +82,7 @@ const ClientOrderPage: React.FC = () => {
 
     const fetchCategorias = async () => {
         try {
-            const response = await axios.get<Categoria[]>("https://192.168.1.5:3010/api/categoria");
+            const response = await axios.get<Categoria[]>("https://qr-efficient-backend.onrender.com/api/categoria");
             setCategorias(response.data);
         } catch (error) {
             console.error("Error fetching categorias:", error);
@@ -92,7 +92,7 @@ const ClientOrderPage: React.FC = () => {
     const fetchMesaAtendida = async () => {
         try {
             const response = await axios.get(
-                `https://192.168.1.5:3010/api/mesas/mesa-atendida/${mesaId}`
+                `https://qr-efficient-backend.onrender.com/api/mesas/mesa-atendida/${mesaId}`
             );
             setComanda((prevComanda) => ({
                 ...prevComanda,
@@ -156,8 +156,8 @@ const ClientOrderPage: React.FC = () => {
                 }))
             };
             if (comandaActualizada.detallesComanda.length > 0) {
-                await axios.post("https://192.168.1.5:3010/api/comanda", comandaActualizada);
-                await axios.put(`https://192.168.1.5:3010/api/mesas/${comanda.id_mesa_atendida}`, { id_estado_mesa: 6 });
+                await axios.post("https://qr-efficient-backend.onrender.com/api/comanda", comandaActualizada);
+                await axios.put(`https://qr-efficient-backend.onrender.com/api/mesas/${comanda.id_mesa_atendida}`, { id_estado_mesa: 6 });
                 navigate(`/client/table/${mesaId}`);
             }
         } catch (error) {
