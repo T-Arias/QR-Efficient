@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { NextUIProvider, Button, Input, Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
+import { NextUIProvider, Card, CardHeader, CardBody, Switch, Input, Button, Divider } from "@nextui-org/react";
+import { Sun, Moon, Mail, User, Users, CreditCard, Lock, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const SignupPage: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [formData, setFormData] = useState({
     persona: {
       email: '',
@@ -27,6 +32,13 @@ const SignupPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'confirmPassword') {
+      setConfirmPassword(value);
+      setPasswordsMatch(formData.usuario.contrasena === value);
+      return;
+    }
+
     if (name === 'email' || name === 'contrasena') {
       setFormData(prevState => ({
         ...prevState,
@@ -39,6 +51,11 @@ const SignupPage: React.FC = () => {
           email: name === 'email' ? value : prevState.persona.email
         }
       }));
+
+      // Validar confirmación de contraseña si estamos cambiando la contraseña
+      if (name === 'contrasena') {
+        setPasswordsMatch(value === confirmPassword);
+      }
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -52,14 +69,21 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Verificar que las contraseñas coincidan antes de enviar
+    if (formData.usuario.contrasena !== confirmPassword) {
+      setPasswordsMatch(false);
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
     try {
       console.log(error);
-      const response = await axios.post('https://192.168.1.5:3010/api/cliente', formData);
+      const response = await axios.post('https://qr-efficient-backend.onrender.com/api/cliente', formData);
       console.log(response.data);
       navigate('/login');
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error('Error en la respuesta del servidor:', error.response?.data);
+        console.error('Error en la respuesta del servidor:', error);
         setError(error.response?.data.errors[0].msg);
       } else {
         console.error('Error inesperado:', error);
@@ -69,21 +93,34 @@ const SignupPage: React.FC = () => {
 
   return (
     <NextUIProvider>
-      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 to-pink-600 dark:from-gray-800 dark:to-gray-900 p-4 ${isDark ? 'dark' : ''}`}>
-        <Card className="w-full max-w-md">
-          <CardHeader className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">QR-Efficient Signup</h2>
-            <Switch
-              isSelected={isDark}
-              onValueChange={toggleDarkMode}
-              size="lg"
-              color="secondary"
-              startContent={<SunIcon />}
-              endContent={<MoonIcon />}
-            />
+      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-200 via-orange-300 to-red-300 dark:from-gray-900 dark:via-purple-900/70 dark:to-gray-800 p-4 ${isDark ? 'dark' : ''}`}>
+        <Card className="w-full max-w-md border-none shadow-xl backdrop-blur-sm bg-white/90 dark:bg-gray-800/90">
+          <CardHeader className="flex flex-col gap-2 pb-0">
+            <div className="w-full flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 dark:from-purple-500 dark:to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  QR
+                </div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 dark:from-purple-400 dark:to-pink-500 text-transparent bg-clip-text">QR-Efficient</h2>
+              </div>
+              <Switch
+                isSelected={isDark}
+                onValueChange={toggleDarkMode}
+                size="lg"
+                color="warning"
+                startContent={<Sun size={18} className="text-amber-500" />}
+                endContent={<Moon size={18} className="text-purple-400" />}
+              />
+            </div>
+            <Divider className="my-2" />
           </CardHeader>
-          <CardBody className="space-y-4">
-            <form onSubmit={handleSubmit}>
+          <CardBody className="space-y-6 px-6 py-4">
+            <div className="text-center">
+              <h3 className="text-xl font-medium mb-1">Crea tu cuenta</h3>
+              <p className="text-default-500 text-sm">Completa tus datos para registrarte</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <Input
                 isRequired
                 type="email"
@@ -93,8 +130,16 @@ const SignupPage: React.FC = () => {
                 value={formData.usuario.email}
                 onChange={handleInputChange}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <Mail className="text-default-400" size={18} />
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
+
               <Input
                 isRequired
                 type="text"
@@ -104,8 +149,16 @@ const SignupPage: React.FC = () => {
                 value={formData.persona.nombre}
                 onChange={handleInputChange}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <User className="text-default-400" size={18} />
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
+
               <Input
                 isRequired
                 type="text"
@@ -115,8 +168,16 @@ const SignupPage: React.FC = () => {
                 value={formData.persona.apellido}
                 onChange={handleInputChange}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <Users className="text-default-400" size={18} />
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
+
               <Input
                 isRequired
                 type="text"
@@ -126,36 +187,115 @@ const SignupPage: React.FC = () => {
                 value={formData.persona.dni}
                 onChange={handleInputChange}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <CreditCard className="text-default-400" size={18} />
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
+
               <Input
                 isRequired
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label="Contraseña"
                 name="contrasena"
                 placeholder="Ingrese su contraseña"
                 value={formData.usuario.contrasena}
                 onChange={handleInputChange}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <Lock className="text-default-400" size={18} />
+                }
+                endContent={
+                  <button
+                    type="button"
+                    className="focus:outline-none"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ?
+                      <svg xmlns="http://www.w3.org/2000/svg" className="text-default-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg> :
+                      <svg xmlns="http://www.w3.org/2000/svg" className="text-default-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    }
+                  </button>
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
-              <Button type="submit" color="secondary" className="w-full">
+
+              {/* Nuevo campo de confirmación de contraseña */}
+              <Input
+                isRequired
+                type={showConfirmPassword ? "text" : "password"}
+                label="Confirmar Contraseña"
+                name="confirmPassword"
+                placeholder="Confirme su contraseña"
+                value={confirmPassword}
+                onChange={handleInputChange}
+                variant="bordered"
+                radius="sm"
+                color={!passwordsMatch && confirmPassword ? "danger" : "default"}
+                description={!passwordsMatch && confirmPassword ? "Las contraseñas no coinciden" : ""}
+                startContent={
+                  <Lock className="text-default-400" size={18} />
+                }
+                endContent={
+                  <button
+                    type="button"
+                    className="focus:outline-none"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ?
+                      <svg xmlns="http://www.w3.org/2000/svg" className="text-default-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg> :
+                      <svg xmlns="http://www.w3.org/2000/svg" className="text-default-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    }
+                  </button>
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: `border-2 ${!passwordsMatch && confirmPassword ? 'border-red-300 dark:border-red-700' : 'border-orange-200 dark:border-purple-800'} focus-within:!border-orange-500 dark:focus-within:!border-purple-500`
+                }}
+              />
+
+              <Button
+                type="submit"
+                color="warning"
+                className="w-full font-semibold bg-gradient-to-r from-orange-400 to-red-400 dark:from-purple-500 dark:to-pink-400 text-white shadow-lg transition-transform hover:scale-[1.02] mt-2"
+                size="lg"
+                isDisabled={!passwordsMatch && confirmPassword.length > 0}
+              >
                 Registrarse
               </Button>
             </form>
-            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <strong className="font-bold text-sm">{error}</strong>
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onClick={() =>setError('')} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-              </span>
-            </div>}
-            <p className="text-center text-small">
+
+            {error && (
+              <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative" role="alert">
+                <strong className="font-bold text-sm">{error}</strong>
+                <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                  <X
+                    onClick={() => setError('')}
+                    className="text-red-500 cursor-pointer"
+                    size={20}
+                  />
+                </span>
+              </div>
+            )}
+
+            <Divider className="my-2" />
+
+            <p className="text-center text-sm">
               ¿Ya tienes una cuenta?{' '}
               <Button
                 as="a"
-                color="secondary"
+                color="warning"
                 variant="light"
                 onPress={() => navigate('/login')}
+                className="font-semibold text-orange-600 dark:text-purple-400 pl-1"
               >
                 Iniciar sesión
               </Button>
@@ -166,39 +306,5 @@ const SignupPage: React.FC = () => {
     </NextUIProvider>
   );
 };
-
-const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <g fill="currentColor">
-      <path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z" />
-      <path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z" />
-    </g>
-  </svg>
-);
-
-const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <path
-      d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49a8.46 8.46 0 01-1.88.13 8.409 8.409 0 01-5.91-2.82 8.068 8.068 0 01-1.44-8.66c.44-1.01.13-1.54-.09-1.76s-.77-.55-1.83-.11a10.318 10.318 0 00-6.32 10.21 10.475 10.475 0 007.04 8.99 10 10 0 002.89.55c.16.01.32.02.48.02a10.5 10 0 008.47-4.27c.67-.93.49-1.519.32-1.79z"
-      fill="currentColor"
-    />
-  </svg>
-);
 
 export default SignupPage;

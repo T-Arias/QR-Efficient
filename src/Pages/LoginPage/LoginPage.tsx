@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { NextUIProvider, Button, Input, Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthStore } from "../../Store/useAuthStore";
+import { NextUIProvider, Card, CardHeader, CardBody, Switch, Input, Button, Divider, Link } from "@nextui-org/react";
+import { Sun, Moon, Mail, Lock, Eye, EyeOff, LogIn, X } from "lucide-react";
 
 interface LoginUser {
   Persona: Persona;
@@ -40,6 +41,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { setAuthData } = useAuthStore();
 
@@ -52,7 +54,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       const contrasena = password;
-      const response = await axios.post('https://192.168.1.5:3010/api/login', { email, contrasena });
+      const response = await axios.post('https://qr-efficient-backend.onrender.com/api/login', { email, contrasena });
       console.log('Response:', response.data);
       const user: LoginUser = response.data;
 
@@ -71,22 +73,34 @@ const LoginPage: React.FC = () => {
 
   return (
     <NextUIProvider>
-      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 to-pink-600 dark:from-gray-800 dark:to-gray-900 p-4 ${isDark ? 'dark' : ''}`}>
-        <Card className="w-full max-w-md">
-          <CardHeader className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">QR-Efficient</h2>
-            <Switch
-              isSelected={isDark}
-              onValueChange={toggleDarkMode}
-              size="lg"
-              color="secondary"
-              startContent={<SunIcon />}
-              endContent={<MoonIcon />}
-            />
+      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-200 via-orange-300 to-red-300 dark:from-gray-900 dark:via-purple-900/70 dark:to-gray-800 p-4 ${isDark ? 'dark' : ''}`}>
+        <Card className="w-full max-w-md border-none shadow-xl backdrop-blur-sm bg-white/90 dark:bg-gray-800/90">
+          <CardHeader className="flex flex-col gap-2 pb-0">
+            <div className="w-full flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 dark:from-purple-500 dark:to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  QR
+                </div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 dark:from-purple-400 dark:to-pink-500 text-transparent bg-clip-text">QR-Efficient</h2>
+              </div>
+              <Switch
+                isSelected={isDark}
+                onValueChange={toggleDarkMode}
+                size="lg"
+                color="warning"
+                startContent={<Sun size={18} className="text-amber-500" />}
+                endContent={<Moon size={18} className="text-purple-400" />}
+              />
+            </div>
+            <Divider className="my-2" />
           </CardHeader>
-          <CardBody className="space-y-4">
-            <p className="text-default-500">Enter your credentials to login</p>
-            <form onSubmit={handleLogin}>
+          <CardBody className="space-y-6 px-6 py-4">
+            <div className="text-center">
+              <h3 className="text-xl font-medium mb-1">¡Bienvenido!</h3>
+              <p className="text-default-500 text-sm">Accede a tu cuenta para tener una experiencia única</p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-5">
               <Input
                 type="email"
                 label="Email"
@@ -94,36 +108,88 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onValueChange={setEmail}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <Mail className="text-default-400" size={18} />
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
+
               <Input
-                type="password"
-                label="Password"
-                placeholder="Enter your password"
+                type={showPassword ? "text" : "password"}
+                label="Contraseña"
+                placeholder="Introduce tu contraseña"
                 value={password}
                 onValueChange={setPassword}
                 variant="bordered"
-                className="mb-4"
+                radius="sm"
+                startContent={
+                  <Lock className="text-default-400" size={18} />
+                }
+                endContent={
+                  <button
+                    type="button"
+                    className="focus:outline-none"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ?
+                      <EyeOff className="text-default-400" size={18} /> :
+                      <Eye className="text-default-400" size={18} />
+                    }
+                  </button>
+                }
+                classNames={{
+                  input: "pl-1",
+                  inputWrapper: "border-2 border-orange-200 dark:border-purple-800 focus-within:!border-orange-500 dark:focus-within:!border-purple-500"
+                }}
               />
-              <Button type="submit" color="secondary" className="w-full">
-                Log in
+
+              <div className="flex justify-between items-center">
+                {/* <Checkbox size="sm">Recordarme</Checkbox> */}
+                <Link /* href="/forgot-password" */ className="text-sm text-orange-600 dark:text-purple-400 cursor-pointer hover:underline">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+
+              <Button
+                type="submit"
+                color="warning"
+                className="w-full font-semibold bg-gradient-to-r from-orange-400 to-red-400 dark:from-purple-500 dark:to-pink-400 text-white shadow-lg transition-transform hover:scale-[1.02]"
+                startContent={<LogIn size={18} />}
+                size="lg"
+              >
+                Iniciar sesión
               </Button>
             </form>
-            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <strong className="font-bold text-sm">{error}</strong>
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onClick={() => setError('')} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-              </span>
-            </div>}
-            <p className="text-center text-small">
-              Don't have an account?{' '}
+
+            {error && (
+              <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative" role="alert">
+                <strong className="font-bold text-sm">{error}</strong>
+                <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                  <X
+                    onClick={() => setError('')}
+                    className="text-red-500 cursor-pointer"
+                    size={20}
+                  />
+                </span>
+              </div>
+            )}
+
+            <Divider className="my-2" />
+
+            <p className="text-center text-sm">
+              ¿No tienes una cuenta?{' '}
               <Button
                 as="a"
-                color="secondary"
+                color="warning"
                 variant="light"
                 onPress={() => navigate('/signup')}
+                className="font-semibold text-orange-600 dark:text-purple-400 pl-1"
               >
-                Sign up
+                Regístrate ahora
               </Button>
             </p>
           </CardBody>
@@ -131,40 +197,6 @@ const LoginPage: React.FC = () => {
       </div>
     </NextUIProvider>
   );
-};
-
-const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <g fill="currentColor">
-      <path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z" />
-      <path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z" />
-    </g>
-  </svg>
-);
-
-const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <path
-      d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49a8.46 8.46 0 01-1.88.13 8.409 8.409 0 01-5.91-2.82 8.068 8.068 0 01-1.44-8.66c.44-1.01.13-1.54-.09-1.76s-.77-.55-1.83-.11a10.318 10.318 0 00-6.32 10.21 10.475 10.475 0 007.04 8.99 10 10 0 002.89.55c.16.01.32.02.48.02a10.5 10 0 008.47-4.27c.67-.93.49-1.519.32-1.79z"
-      fill="currentColor"
-    />
-  </svg>
-);
+}
 
 export default LoginPage;
