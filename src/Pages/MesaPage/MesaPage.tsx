@@ -154,7 +154,7 @@ const MesaPage: React.FC = () => {
             <div style="margin: 5px 0;">
               <img
                 id="logo-image"
-                src="../../logo_Mesa.png"
+                src="/logo_Mesa.png"
                 alt="Logo Mesa"
                 style="
                   display: block;
@@ -328,7 +328,7 @@ const MesaPage: React.FC = () => {
                         value={`/client/table/${currentMesa.numero}`}
                         size={256}
                         imageSettings={{
-                          src: "../../logo_Mesa.png",
+                          src: "/logo_Mesa.png",
                           excavate: true,
                           height: 40,
                           width: 80
